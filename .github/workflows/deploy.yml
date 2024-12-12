@@ -1,0 +1,29 @@
+name: Demo Workflow
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-south-1
+  PROJECT_NAME: test
+  S3_BUCKET_NAME: anil-ci-artifacts
+
+jobs:
+  upload-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Upload Build Artifact to S3
+        uses: anilrajrimal1/s3-build-artifact-uploader@v1.2
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+          s3_bucket_name: ${{ env.S3_BUCKET_NAME }}
+          project_name: ${{ env.PROJECT_NAME }}
+          zip_name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}.zip
